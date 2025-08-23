@@ -45,34 +45,4 @@ Copy
 7	Auth-MS, Patient-MS, Doctor-MS, Appointment-MS split	🔜
 🏗️ High-level Architecture
 Text
-Copy
 
-┌──────────────┐    ┌──────────────┐    ┌──────────────┐
-│   React UI   │◄──►│ API Gateway  │◄──►│  Services    │
-│  (Tailwind)  │    │   (nginx)    │    │ (4 μSvcs)    │
-└──────────────┘    └──────────────┘    └──────────────┘
-                               ▲                  │
-                               │                  ▼
-                        ┌──────────────┐   ┌──────────────┐
-                        │   Redis      │   │ PostgreSQL   │
-                        │  (sessions)  │   │   (data)     │
-                        └──────────────┘   └──────────────┘
-
-🧩 Micro-service Road-map
-Table
-Copy
-Service	Responsibility	Port	DB
-Auth-MS	Registration, login, OAuth handshake, sessions	5001	Redis only
-Patient-MS	Patient profile CRUD	5002	Postgres patients
-Doctor-MS	Doctor profile + schedule CRUD	5003	Postgres doctors, schedules
-Appointment-MS	Slot search, booking, cancellation	5004	Postgres appointments, Redis cache
-🧰 Tech Stack
-
-    Node.js 20 + Express 4
-    PostgreSQL 15 (via Sequelize ORM)
-    Redis 7 (sessions + cache)
-    Docker & Docker Compose
-    React 18 + Vite + TailwindCSS 3 (UI)
-    bcrypt for password hashing
-    crypto (built-in) for signing/verifying OAuth state & session IDs
-    nodemailer for password-reset flow (later)
