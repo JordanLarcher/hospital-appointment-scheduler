@@ -1,0 +1,38 @@
+version: 
+services:
+  postgres:
+    image: postgres: 15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: hospital
+    ports: ["5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/1-init.sql
+      - ./sql/seed.sql:/docker-entrypoint-initdb.d/2-init.sql
+
+
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+
+
+  app:
+    build: .
+    ports: ["5000:5000"]
+    depends_on: [postgres, redis]
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      PGHOST: postgres
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: hospital
+      redis: redis://redis:6379
+      GOOGLE_CLIENT_ID: xxx
+      GOOGLE_CLIENT_SECRET: xxx
+
+  volumes:
+    pgdata:
