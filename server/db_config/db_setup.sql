@@ -28,7 +28,6 @@ CREATE TABLE doctors(
   doctor_id SERIAL PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   spec_id INTEGER REFERENCES specializations(spec_id),
-  max_appointments INTEGER DEFAULT 10, -- Max daily appointments
   availability JSONB
   -- Example availability:
   -- {"Monday": {"start": "09:00", "end": "21:00"}, ...}
@@ -46,12 +45,6 @@ CREATE TABLE appointments(
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   -- This unique constraint is critical to preven a doctor form being double booked 
   UNIQUE(doctor_id, appointment_time)
-);
-
-CREATE TABLE symptoms_mappings (
-  id SERIAL PRIMARY KEY,
-  symptom VARCHAR(200) NOT NULL,
-  specialization_id INTEGER REFERENCES specializations(spec_id)
 );
 
 
