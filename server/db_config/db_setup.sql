@@ -20,7 +20,8 @@ CREATE TABLE profiles(
 -- Specializations table: Stores doctor's Specializations
 CREATE TABLE specializations(
   spec_id SERIAL PRIMARY KEY,
-  name VARCHAR(100) UNIQUE NOT NULL
+  name VARCHAR(100) UNIQUE NOT NULL,
+  description TEXT
 );
 
 -- Doctors table: Stores doctor information and their general availability
@@ -31,6 +32,8 @@ CREATE TABLE doctors(
   availability JSONB
   -- Example availability:
   -- {"Monday": {"start": "09:00", "end": "21:00"}, ...}
+  max_appointments INTEGER DEFAULT 10, -- Max daily appointments 
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Appointment table: Stores core table linking patients, doctors, and time slots 
@@ -46,7 +49,4 @@ CREATE TABLE appointments(
   -- This unique constraint is critical to preven a doctor form being double booked 
   UNIQUE(doctor_id, appointment_time)
 );
-
-
--- SAMPLE data
 
