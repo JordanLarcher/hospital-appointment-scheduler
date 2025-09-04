@@ -8,7 +8,7 @@ const generateTokens = (payload) => {
 
 const generateToken = (payload) => {
   // Current existing logic but now with expiration 
-  payload.exp = Math.floor((Date.now() / 1000) + parseExpiration(expiresIn);
+  payload.exp = Math.floor((Date.now() / 1000) + parseExpiration(expiresIn));
   const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
   const payloadStr = Buffer.from(JSON.stringify(payload)).toString('base64url');
   const signature = crypto
@@ -45,4 +45,4 @@ const verifyToken = (token) => {
   }
 };
 
-module.exports = { generateToken, verifyToken };
+module.exports = { generateToken, verifyToken, generateTokens };

@@ -1,4 +1,4 @@
-const { findAvailableDoctors, bookAppointment } = require('../modules/appointment.js');
+const { findAvailableDoctors, bookAppointment, findUserAppointments, cancelAppointment } = require('../modules/appointment.js');
 const pool = require('../config/db.js');
 const Joi = require('joi');
 
@@ -6,6 +6,16 @@ const bookSchema = Joi.object({
   specializationId: Joi.number().required(),
   date: Joi.date().required(),
   symptom: Joi.string().optional()
+});
+
+
+const getAppointmentsSchema = Joi.object({
+  page: Joi.number().integer().min(1).default(1),
+  limit: Joi.number().integer().min(1).max(100).default(10),
+});
+
+const cancelAppointmentSchema = Joi.object({
+  appointmentId: Joi.number().integer().required(),
 });
 
 

@@ -1,6 +1,43 @@
 const pool = require('../config/db.js');
 
 
+const findUserAppointments = async (userId, role) => {
+  if (role === 'admin') {
+    const result = await pool.query(
+      `SELECT a.*, d.name as doctor_name, s.name as specialization
+      FROM appointments a 
+      JOIN doctors d ON a.doctor_id = d.doctor_id
+      JOIN specializations s ON d.spec_id = s.spec_id
+      WHERE a.status = 'scheduled'
+      ORDER BY a.appointment_time`
+    );
+    return result.rows;
+  }
+
+  const result = await pool.query(
+    `SELECT a.*, d.name as doctor_name, s.name as specialization
+    FROM appointments a
+    JOIN doctors d ON a.appointment_id = d.doctor_id
+    JOIN specializations s ON d.spec_id = s.spec_id
+    WHERE a.patient_id = $1 AND a.status = 'scheduled'
+    ORDER BY a.appointment_time`,
+    [userId]
+  );
+
+  return result.rows;
+};
+
+
+const cancelAppointment = async (userId, appointmentId, role) => {
+  const query = role === 'admin'
+    ? 'UPDATE appointments SET status = $1 WHERE id = $2 RETURNING *'
+    : 'UPDATE appointments SET status = $1 WHERE id = $2 AND user_id = $3 RETURNING *'
+  const params = role === 'admin' ? ['cancelled', appointmentId] : ['cancelled', appointmentId, userId];
+  const results = await pool.query(query, params);
+  if (!results.rows[0]) throw new Error('Appointment not found or unauthorized');
+  return results.rows[0];
+}
+
 const findAvailableDoctors = async (spec_id, date) => {
   const startOfDay = new Date(date).setHours(0, 0, 0, 0);
   const endOfDay = new Date(date).setHours(23, 59, 59, 999);
@@ -27,4 +64,4 @@ const bookAppointment = async (userId, doctorId, appointmentTime) => {
 };
 
 
-module.exports = { findAvailableDoctors, bookAppointment };
+module.exports = { findAvailableDoctors, bookAppointment, cancelAppointment, findUserAppointments };

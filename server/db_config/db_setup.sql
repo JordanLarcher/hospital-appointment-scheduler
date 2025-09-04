@@ -1,7 +1,9 @@
 -- User Table: Stores login information and roles for both patients and admins.
-CREATE TABLE users(
-  user_id SERIAL PRIMARY KEY,
-  username VARCHAR(50) UNIQUE NOT NULL,
+
+
+CREATE TABLE users( 
+  user_id SERIAL PRIMARY KEY, 
+  username VARCHAR(50) UNIQUE NOT NULL, 
   email VARCHAR(255) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   role VARCHAR(10) NOT NULL CHECK (role IN ('patient','admin')) DEFAULT 'patient',
@@ -49,4 +51,13 @@ CREATE TABLE appointments(
   -- This unique constraint is critical to preven a doctor form being double booked 
   UNIQUE(doctor_id, appointment_time)
 );
+
+CREATE TABLE refresh_token(
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(user_id),
+  token VARCHAR(255) NOT NULL,
+  expires_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 
